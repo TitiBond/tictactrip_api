@@ -31,8 +31,6 @@ exports.justifyController = {
     }
 };
 function justifyText(text) {
-    //const specialCharacter = ["\n", "\t", "\r", " "]
-    //const specialCharacter = /[\n\r\ ]/
     const specialCharacter = /\s{1,}/;
     const maxChar = 80;
     const words = text.split(specialCharacter);
@@ -41,45 +39,47 @@ function justifyText(text) {
     const wordBeforeLineBreakArray = [];
     //array to save word number for each justified rows
     const wordBeforeLineJustifyArray = [];
-    for (let index = 0; index < words.length; index++) {
-        const element = words[index];
-        console.log(index + " : " + element);
-    }
-    console.log(words.length);
-    let charCount = 0;
-    let wordCount = 0;
     //calculate words number before line break
     rows.forEach(row => {
         wordBeforeLineBreakArray.push(row.split(" ").length);
     });
     let newText = [];
+    let charCount = 0;
+    let wordCount = 0;
     //calculate word number in each rows
     for (let i = 0; i < words.length; i++) {
-        if (i == words.length - 1) {
-            charCount += words[i].length;
-            wordCount++;
-            wordBeforeLineJustifyArray.push([wordCount, charCount]);
-            charCount = 0;
-            wordCount = 0;
-        }
-        if (charCount + words[i].length + wordCount + 1 <= maxChar) {
+        if (charCount + words[i].length + wordCount <= maxChar) {
             charCount += words[i].length;
             wordCount++;
         }
         else {
-            wordBeforeLineJustifyArray.push([wordCount, charCount]);
+            wordBeforeLineJustifyArray.push(wordCount);
+            charCount = words[i].length;
+            wordCount = 1;
+        }
+        if (i == words.length - 1) {
+            wordBeforeLineJustifyArray.push(wordCount);
             charCount = 0;
             wordCount = 0;
         }
     }
     let currentWord = 0;
     for (let i = 0; i < wordBeforeLineJustifyArray.length; i++) {
-        for (let y = currentWord; y < currentWord + wordBeforeLineJustifyArray[i][0]; y++) {
-            newText[i] += " " + words[y];
+        newText[i] = "";
+        for (let y = currentWord; y < currentWord + wordBeforeLineJustifyArray[i]; y++) {
+            newText[i] += (newText[i] == "") ? words[y] : " " + words[y];
         }
-        currentWord += wordBeforeLineJustifyArray[i][0];
+        currentWord += wordBeforeLineJustifyArray[i];
     }
+    words.forEach(w => {
+        console.log(w);
+    });
     console.log(wordBeforeLineJustifyArray);
     console.log(newText);
+    //console.log(wordBeforeLineBreakArray)
+    newText.forEach(row => {
+        const spaceToAdd = maxChar - row.length;
+        console.log(`taille : ${row.length}  et espace : ${spaceToAdd}`);
+    });
     return `${text} texte justifé`;
 }
