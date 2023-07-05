@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config()
-import { Request, Response } from 'express'
+import bodyParser from 'body-parser'
 
 import justifyRouter from './routes/justifyRouter'
 
@@ -8,6 +8,7 @@ import express from 'express'
 const app = express()
 
 app.use(express.json())
+app.use(bodyParser.text())
 app.use('/api/justify', justifyRouter)
 
 
